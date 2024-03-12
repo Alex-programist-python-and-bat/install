@@ -1,8 +1,13 @@
-def calculate_pi(terms):
-    pi = 0
-    for k in range(terms):
-        pi += ((-1) ** k) / (2 * k + 1)
-    return 4 * pi
+from multiprocessing import Pool as P
+from tqdm import tqdm as T
 
-num_terms = 100000000000000000000000000
-print(calculate_pi(num_terms))
+def c(k):
+    return ((-1) ** k) / (2 * k + 1)
+
+def p(t, n):
+    with P(n) as p:
+        return 4 * sum(T(p.imap(c, range(t)), total=t, desc="Calculating pi", unit="term"))
+
+t, n = 1000000, 7
+print(p(t, n))  
+print(f"{n} cores was used")
